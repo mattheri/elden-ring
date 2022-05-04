@@ -21,7 +21,7 @@ const card = ({ name, image, description }) => {
 }
 
 const undisableLink = (selector) => {
-	const link = document.querySelector(`.nav-link.${containerSelector}`);
+	const link = document.querySelector(`.nav-link.${selector}`);
 	link.classList.remove("disabled");
 }
 
