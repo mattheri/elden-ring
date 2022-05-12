@@ -36,10 +36,10 @@ const removeLoading = (selector) => {
  * elle doit appeler la fonction card.
  * Elle attachera ensuite les éléments créés au bon élément.
  */
-const cardBuilder = (data = [], card, containerSelector = "bosses") => {
+const cardBuilder = (data = [], card, containerSelector) => {
 	// Pour chaque élément du tableau, on crée une carte. Toutes ces cartes nouvellement créées
 	// doivent être retournées dans un nouveau tableau.
-	//const cards = ;
+	const cards = data.map((resultanteDeLapi) => card(resultanteDeLapi));
 
 	// On query le container.
 	const container = document.querySelector(`#${containerSelector} > .row`);
@@ -50,6 +50,8 @@ const cardBuilder = (data = [], card, containerSelector = "bosses") => {
 	 * container.innerHTML += card;
 	 */
 
+	cards.map((card) => container.innerHTML += card);
+
 	// Ensuite, il s'assure que le lien n'est plus "disabled"
 	undisableLink(containerSelector);
 
@@ -57,6 +59,38 @@ const cardBuilder = (data = [], card, containerSelector = "bosses") => {
 	removeLoading(containerSelector);
 }
 
-// Fonction pour fetcher les boss
+// Fonction pour fetcher les bosses
+const fetchBosses = async () => {
+	// J'essaye d'aller chercher les boss
+	try {
+		// Aller chercher les boss avec l'API et j'attends la réponse
+		const response = await fetch(`${BASE_URL}/${BOSSES}`);
+		// Si la réponse n'est pas ok, je lance une erreur
+		if (!response.ok) throw new Error(response.statusText);
+		// Si la réponse est ok, j'attends le json
+		const json = await response.json();
+		// J'utilise le data de la réponse pour créer les cartes
+		cardBuilder(json.data, card, "bosses");
+	}
+	catch (error) {
+		// Si ça ne fonctionne pas, log une erreur
+		console.error(error);
+	}
+
+}
 
 // Fonction pour fetcher les items
+const fetchItems = async () => {
+	try {
+		const response = await fetch(`${BASE_URL}/${ITEMS}`);
+		if (!response.ok) throw new Error(response.statusText);
+		const json = await response.json();
+
+		cardBuilder(json.data, card, "items");
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+fetchBosses();
+fetchItems();
